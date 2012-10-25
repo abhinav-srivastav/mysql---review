@@ -1,0 +1,85 @@
+
+
+ques 1.
+select user1.name , following_id as followings from relationships join users as user1 on user1.id =  user_id  ;
++-------+------------+
+| name  | followings |
++-------+------------+
+| Akhil |          2 |
+| Akhil |          3 |
+| Akhil |          5 |
+| Akhil |          9 |
+| Akhil |         10 |
+| John  |          7 |
+| Ryan  |          6 |
+| Kapil |          1 |
+| Kapil |          2 |
+| Kapil |         10 |
+| Ankur |          1 |
+| Ankur |          2 |
+| Ankur |          3 |
+| Ankur |          4 |
+| Ankur |          5 |
+| Ankur |          6 |
+| Ankur |          7 |
+| Ankur |          8 |
+| Ankur |         10 |
++-------+------------+
+19 rows in set (0.00 sec)
+
+
+ques 2.
+select user1.name , group_concat(following_id) as following from relationships join users as user1 on user1.id =  user_id group by user1.name order by count(following_id) desc ;
++-------+--------------------+
+| name  | following          |
++-------+--------------------+
+| Ankur | 1,2,3,4,5,6,7,8,10 |
+| Akhil | 2,3,5,9,10         |
+| Kapil | 1,2,10             |
+| John  | 7                  |
+| Ryan  | 6                  |
++-------+--------------------+
+5 rows in set (0.00 sec)
+
+ques 3
+select tweets.user_id, tweets.content, tweets.created_at from tweets join relationships as rel where tweets.user_id = 1 or tweets.user_id in (select following_id from relationships where user_id = 1)  group by content order by tweets.created_at desc 
+    -> ;
++---------+-------------------------------------------------+---------------------+
+| user_id | content                                         | created_at          |
++---------+-------------------------------------------------+---------------------+
+|       1 | Its raining                                     | 2012-08-07 12:57:43 |
+|       2 | Stop playing twitter twitter, focus on your job | 2012-08-07 12:55:46 |
+|       9 | Thanks for letting me know                      | 2012-08-07 12:54:51 |
+|       9 | Nokis is a nice mobile company                  | 2012-08-07 12:54:20 |
+|       5 | I am at vinsol                                  | 2012-08-07 12:53:59 |
+|      10 | Lets test this...                               | 2012-08-07 12:53:18 |
+|       1 | lorem ipsum                                     | 2012-08-07 12:53:01 |
+|       2 | Hello there                                     | 2012-08-07 12:52:46 |
+|       2 | Test tweet.                                     | 2012-08-07 12:52:38 |
+|       1 | My first ever tweet.                            | 2012-08-07 12:52:11 |
++---------+-------------------------------------------------+---------------------+
+10 rows in set (0.00 sec)
+
+
+ques 4.
+ select users.name, count(tweets.id) from users join tweets on users.id =  tweets.user_id  group by name order by tweets.created_at;
++-------+------------------+
+| name  | count(tweets.id) |
++-------+------------------+
+| Akhil |                3 |
+| Manik |                3 |
+| Suman |                1 |
+| Kapil |                1 |
+| Ankur |                2 |
+| John  |                1 |
+| Ryan  |                2 |
+| Rahul |                1 |
+| Sunil |                1 |
++-------+------------------+
+9 rows in set (0.01 sec)
+
+
+
+
+
+
