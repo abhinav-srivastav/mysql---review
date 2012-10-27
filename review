@@ -1,63 +1,65 @@
-
-
 ques 1.
-select user1.name , following_id as followings from relationships join users as user1 on user1.id =  user_id  ;
-+-------+------------+
-| name  | followings |
-+-------+------------+
-| Akhil |          2 |
-| Akhil |          3 |
-| Akhil |          5 |
-| Akhil |          9 |
-| Akhil |         10 |
-| John  |          7 |
-| Ryan  |          6 |
-| Kapil |          1 |
-| Kapil |          2 |
-| Kapil |         10 |
-| Ankur |          1 |
-| Ankur |          2 |
-| Ankur |          3 |
-| Ankur |          4 |
-| Ankur |          5 |
-| Ankur |          6 |
-| Ankur |          7 |
-| Ankur |          8 |
-| Ankur |         10 |
-+-------+------------+
+select users1.name as user, users2.name as following  from  relationships inner join users as users1 inner join users as users2  on users1.id = user_id  and users2.id = following_id;
++-------+-----------+
+| user  | following |
++-------+-----------+
+| Akhil | Manik     |
+| Akhil | Amit      |
+| Akhil | Kapil     |
+| Akhil | Ankur     |
+| Akhil | Suman     |
+| John  | Ryan      |
+| Ryan  | John      |
+| Kapil | Akhil     |
+| Kapil | Manik     |
+| Kapil | Suman     |
+| Ankur | Akhil     |
+| Ankur | Manik     |
+| Ankur | Amit      |
+| Ankur | Rahul     |
+| Ankur | Kapil     |
+| Ankur | John      |
+| Ankur | Ryan      |
+| Ankur | Sunil     |
+| Ankur | Suman     |
++-------+-----------+
 19 rows in set (0.00 sec)
 
 
 ques 2.
-select user1.name , group_concat(following_id) as following from relationships join users as user1 on user1.id =  user_id group by user1.name order by count(following_id) desc ;
-+-------+--------------------+
-| name  | following          |
-+-------+--------------------+
-| Ankur | 1,2,3,4,5,6,7,8,10 |
-| Akhil | 2,3,5,9,10         |
-| Kapil | 1,2,10             |
-| John  | 7                  |
-| Ryan  | 6                  |
-+-------+--------------------+
-5 rows in set (0.00 sec)
+  select users1.name as user, group_concat(users2.name) as following  from  relationships inner join users as users1 inner join users as users2  on users1.id =  user_id  and users2.id = following_id group by users1.name order by count(users2.name) desc;
++-------+----------------------------------------------------+
+| user  | following                                          |
++-------+----------------------------------------------------+
+| Ankur | Akhil,Manik,Amit,Rahul,Kapil,John,Ryan,Sunil,Suman |
+| Akhil | Manik,Amit,Kapil,Ankur,Suman                       |
+| Kapil | Akhil,Manik,Suman                                  |
+| John  | Ryan                                               |
+| Ryan  | John                                               |
++-------+----------------------------------------------------+
+5 rows in set (0.01 sec)
+
+
 
 ques 3
-select tweets.user_id, tweets.content, tweets.created_at from tweets join relationships as rel where tweets.user_id = 1 or tweets.user_id in (select following_id from relationships where user_id = 1)  group by content order by tweets.created_at desc 
-    -> ;
-+---------+-------------------------------------------------+---------------------+
-| user_id | content                                         | created_at          |
-+---------+-------------------------------------------------+---------------------+
-|       1 | Its raining                                     | 2012-08-07 12:57:43 |
-|       2 | Stop playing twitter twitter, focus on your job | 2012-08-07 12:55:46 |
-|       9 | Thanks for letting me know                      | 2012-08-07 12:54:51 |
-|       9 | Nokis is a nice mobile company                  | 2012-08-07 12:54:20 |
-|       5 | I am at vinsol                                  | 2012-08-07 12:53:59 |
-|      10 | Lets test this...                               | 2012-08-07 12:53:18 |
-|       1 | lorem ipsum                                     | 2012-08-07 12:53:01 |
-|       2 | Hello there                                     | 2012-08-07 12:52:46 |
-|       2 | Test tweet.                                     | 2012-08-07 12:52:38 |
-|       1 | My first ever tweet.                            | 2012-08-07 12:52:11 |
-+---------+-------------------------------------------------+---------------------+
+ select users.name, tweets.content, tweets.created_at from tweets join relationships as rel join users 
+    -> where tweets.user_id = 1 or tweets.user_id 
+    -> in (select following_id from relationships where user_id = 1) and users.id = tweets.user_id
+    -> group by content order by tweets.created_at desc ;
++-------+-------------------------------------------------+---------------------+
+| name  | content                                         | created_at          |
++-------+-------------------------------------------------+---------------------+
+| Akhil | Its raining                                     | 2012-08-07 12:57:43 |
+| Manik | Stop playing twitter twitter, focus on your job | 2012-08-07 12:55:46 |
+| Ankur | Thanks for letting me know                      | 2012-08-07 12:54:51 |
+| Ankur | Nokis is a nice mobile company                  | 2012-08-07 12:54:20 |
+| Kapil | I am at vinsol                                  | 2012-08-07 12:53:59 |
+| Suman | Lets test this...                               | 2012-08-07 12:53:18 |
+| Akhil | lorem ipsum                                     | 2012-08-07 12:53:01 |
+| Manik | Hello there                                     | 2012-08-07 12:52:46 |
+| Manik | Test tweet.                                     | 2012-08-07 12:52:38 |
+| Akhil | My first ever tweet.                            | 2012-08-07 12:52:11 |
++-------+-------------------------------------------------+---------------------+
 10 rows in set (0.00 sec)
 
 
@@ -79,7 +81,23 @@ ques 4.
 9 rows in set (0.01 sec)
 
 
+ques 5.
+elect users.name from tweets right join users on tweets.user_id = users.id where tweets.user_id is null ;
++------+
+| name |
++------+
+| Amit |
++------+
+1 row in set (0.00 sec)
 
 
-
+ques 6.
+SELECT * FROM tweets WHERE DATE_SUB(NOW(),INTERVAL 1 HOUR) < CREATED_AT ;
++----+---------+---------------------------------------------------+------+---------------------+
+| id | user_id | content                                           | type | created_at          |
++----+---------+---------------------------------------------------+------+---------------------+
+| 14 |       4 | really?                                           | NULL | 2012-10-27 12:57:56 |
+| 15 |       8 | I think we now have enough deta to write queries. | NULL | 2012-10-27 12:58:48 |
++----+---------+---------------------------------------------------+------+---------------------+
+2 rows in set (0.00 sec)
 
